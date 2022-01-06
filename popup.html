@@ -1,15 +1,15 @@
-<!-- 크롬익스텐션을 눌럿을때 나오게 되는 화면이다. -->
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="popup.css">
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <form action='background.js'>
-      <INPUT TYPE = "TEXT"  NAME = "name" SIZE = "20" >
-      <button type="button" onclick="" style="width: auto;" >전송</button>
-    </form>
-    <script src="popup.js"></script>
+    <input id="keyword" type="text" />
+    <button id="input">검 색</button>
+    <button id="getTagsTest">getTagsTest</button>
+    <div id="result" />
+    <script type="text/javascript" src="search.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
   </body>
 </html>

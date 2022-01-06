@@ -1,15 +1,23 @@
 {
+  "manifest_version": 2,
   "name": "Extention for Crawling",
+  "version": "0.1.0",
   "description": "Build an Extension!",
-  "version": "1.0",
-  "manifest_version": 3,
   "options_page": "options.html",
   "background": {
-    "service_worker": "background.js"
+    "scripts": ["background.js"],
+    "persistent": false
   },
-  "action": {
+  "browser_action": {
+    "default_title": "searchCrwaling",
     "default_popup": "popup.html"
   },
-
-  "permissions": ["storage"]
+  "permissions": ["storage", "*://*/realtimemonitoring"],
+  "content_scripts": [
+    {
+      "matches": ["*://*/realtimemonitoring"],
+      "run_at": "document_end",
+      "js": ["search.js"]
+    }
+  ]
 }
