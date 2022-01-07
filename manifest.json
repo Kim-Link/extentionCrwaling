@@ -17,7 +17,7 @@
     {
       "matches": ["*://*/realtimemonitoring"],
       "run_at": "document_end",
-      "js": ["search.js"]
+      "js": ["search.js", "result.js"]
     }
   ]
 }
