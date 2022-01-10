@@ -15,9 +15,9 @@
   "permissions": ["storage", "*://*/realtimemonitoring"],
   "content_scripts": [
     {
-      "matches": ["*://*/realtimemonitoring"],
+      "matches": ["*://localhost/productname"],
       "run_at": "document_end",
-      "js": ["search.js", "result.js"]
+      "js": ["search.js", "content_scripts.js"]
     }
   ]
 }

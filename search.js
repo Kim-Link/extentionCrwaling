@@ -1,5 +1,6 @@
 async function getHashTag(url) {
   let result = [];
+  if (!url.includes('/smartstore.naver.com')) return result;
   try {
     const data = await fetch(url);
     const response = await data.text();
@@ -12,10 +13,12 @@ async function getHashTag(url) {
     );
     const scriptInfo = JSON.parse(json);
     const productHashTag = scriptInfo.product.A.seoInfo.sellerTags;
-    productHashTag.forEach((el) => {
-      result.push(el.text);
-    });
-  } catch {
+    if (productHashTag) {
+      productHashTag.forEach((el) => {
+        result.push(el.text);
+      });
+    }
+  } catch (error) {
     console.error(`getHashTag error : ${error}`);
   }
   return result;
@@ -23,7 +26,7 @@ async function getHashTag(url) {
 
 async function getProductDataList(keyword) {
   console.log('search.js >> getProductDataList keyword : ', keyword);
-  const url = `https://search.shopping.naver.com/search/all?where=all&frm=NVSCTAB&pagingSize=20&query=${encodeURI(
+  const url = `https://search.shopping.naver.com/search/all?where=all&frm=NVSCTAB&pagingSize=40&query=${encodeURI(
     keyword
   )}`;
 
@@ -35,47 +38,53 @@ async function getProductDataList(keyword) {
   const jsonData = doc.getElementById('__NEXT_DATA__').innerHTML;
   const json = JSON.parse(jsonData);
   const productsList = json.props.pageProps.initialState.products.list;
+  console.log('search.js >> getProductDataList productsList : ', productsList);
   let result;
   try {
-    result = await Promise.all(
-      productsList.map(async (el) => {
+    result = [];
+    productsList.forEach((el) => {
+      if (!el.item.adId) {
         const productData = {};
         const data = el.item;
-        productData.productTitle = data.productTitle;
         const categoryFullPath = [];
         for (let i = 1; i <= data.categoryLevel; i += 1) {
           categoryFullPath.push(data[`category${i}Name`]);
         }
         const category = categoryFullPath.join(' > ');
+        productData.productTitle = data.productTitle;
         productData.category = category;
         productData.mallName = data.mallName;
         productData.property = {};
         productData.property.attributeValue = data.attributeValue;
         productData.property.characterValue = data.characterValue;
-        // url
+        productData.id = data.id;
         if (el.item.mallProductUrl) {
           productData.url = data.mallProductUrl;
-          // tags = await getHashTag(data.mallProductUrl);
         } else {
           productData.url = null;
         }
-        let tags = null;
-        productData.tags = tags;
-
-        return productData;
-      })
-    );
-
-    for (let i = 0; i < result.length; i++) {
-      if (result[i].url) {
-        console.log('반복문', result[i].url);
-        const tag = await getHashTag(result[i].url);
-        result[i].tags = tag;
+        result.push(productData);
       }
-    }
+    });
+    return result;
   } catch (error) {
     console.error(` getProductDataList : ${error}`);
   }
 
   return result;
+}
+
+async function inputTags(data) {
+  const tagsData = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].url) {
+      const id = data[i].id;
+      const tag = await getHashTag(data[i].url);
+      data[i].tags = tag;
+      tagsData.push({ id, tag });
+    }
+  }
+  // 스트링으로 바꿔서 로컬스토리지에 넣어주기.
+  localStorage.setItem(tagsData);
+  return tagsData;
 }
