@@ -54,7 +54,6 @@ async function getProductDataList(keyword) {
         productData.property.characterValue = data.characterValue;
         // url
         if (el.item.mallProductUrl) {
-          console.log(data.mallProductUrl);
           productData.url = data.mallProductUrl;
           // tags = await getHashTag(data.mallProductUrl);
         } else {
@@ -66,6 +65,14 @@ async function getProductDataList(keyword) {
         return productData;
       })
     );
+
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].url) {
+        console.log('반복문', result[i].url);
+        const tag = await getHashTag(result[i].url);
+        result[i].tags = tag;
+      }
+    }
   } catch (error) {
     console.error(` getProductDataList : ${error}`);
   }
