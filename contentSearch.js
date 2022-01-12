@@ -26,11 +26,12 @@ async function getHashTag(url) {
 
 async function getProductDataList(keyword) {
   console.log('search.js >> getProductDataList keyword : ', keyword);
+  console.log('search.js >> window.location : ', window.location);
   const url = `https://search.shopping.naver.com/search/all?where=all&frm=NVSCTAB&pagingSize=40&query=${encodeURI(
     keyword
   )}`;
 
-  const data = await fetch(url);
+  const data = await letFetch(url);
   const response = await data.text();
   const parser = new DOMParser();
   const doc = parser.parseFromString(response, 'text/html');
